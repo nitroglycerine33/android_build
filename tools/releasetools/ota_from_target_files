@@ -380,6 +380,16 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   AppendAssertions(script, input_zip)
   device_specific.FullOTA_Assertions()
+  script.Print(" ");	
+
+  script.Print("           (                    ");
+  script.Print(" (       )\(              (     ");
+  script.Print(" )\   ( ((_)\ `  )  (    ))\    ");
+  script.Print("((_)  )\ _((_)/(/(  )\  /((_)   ");
+  script.Print("| __|((_) |(_|(_)_\((_)(_))     ");
+  script.Print("| _|/ _|| || | '_ \|_-</ -_)    ");
+  script.Print("|___\__||_||_| .__//__/\___|    ");
+  script.Print("             |_|                ");
 
   script.ShowProgress(0.5, 0)
 
@@ -401,6 +411,9 @@ def WriteFullOTAPackage(input_zip, output_zip):
                                      OPTIONS.input_tmp, "BOOT")
   Item.GetMetadata(input_zip)
   Item.Get("system").SetPermissions(script)
+
+  script.SetPermissionsRecursive("/system/etc/init.d", 0, 0, 0755, 0555)
+  script.SetPermissions("/system/bin/su", 0, 0, 06755)
 
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)

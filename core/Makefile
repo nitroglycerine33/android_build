@@ -1153,8 +1153,11 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
            -k $(KEY_CERT_PAIR) \
            $(BUILT_TARGET_FILES_PACKAGE) $@
 
-.PHONY: otapackage
+.PHONY: otapackage eclipse
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
+eclipse: otapackage
+	@echo "Running Releasetools"
+	$(hide) ./vendor/Eclipse/tools/squisher
 
 # -----------------------------------------------------------------
 # The update package
