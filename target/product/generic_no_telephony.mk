@@ -32,11 +32,9 @@ PRODUCT_PACKAGES := \
     InputDevices \
     LatinIME \
     Launcher2 \
-    Music \
     MusicFX \
     Provision \
     Phone \
-    QuickSearchBox \
     Settings \
     SystemUI \
     CalendarProvider \
@@ -48,12 +46,7 @@ PRODUCT_PACKAGES += \
     icu.dat
 
 PRODUCT_PACKAGES += \
-    librs_jni \
-    libvideoeditor_jni \
-    libvideoeditor_core \
-    libvideoeditor_osal \
-    libvideoeditor_videofilters \
-    libvideoeditorplayer \
+    librs_jni
 
 PRODUCT_PACKAGES += \
     audio.primary.default \
