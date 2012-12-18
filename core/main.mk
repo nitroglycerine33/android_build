@@ -44,10 +44,9 @@ ifeq (0,$(shell expr $$(echo $(MAKE_VERSION) | sed "s/[^0-9\.].*//") = 3.81))
 ifeq (0,$(shell expr $$(echo $(MAKE_VERSION) | sed "s/[^0-9\.].*//") = 3.82))
 $(warning ********************************************************************************)
 $(warning *  You are using version $(MAKE_VERSION) of make.)
-$(warning *  Android can only be built by versions 3.81 and 3.82.)
+$(warning *  Android is tested to build with versions 3.81 and 3.82.)
 $(warning *  see https://source.android.com/source/download.html)
 $(warning ********************************************************************************)
-$(error stopping)
 endif
 endif
 endif
@@ -129,7 +128,7 @@ java_version :=
 endif
 ifeq ($(strip $(java_version)),)
 $(info ************************************************************)
-$(info You are attempting to build with the incorrect version)
+$(info You are attempting to build with an unsupported version)
 $(info of java.)
 $(info $(space))
 $(info Your version is: $(shell java -version 2>&1 | head -n 1).)
@@ -138,7 +137,6 @@ $(info $(space))
 $(info Please follow the machine setup instructions at)
 $(info $(space)$(space)$(space)$(space)https://source.android.com/source/download.html)
 $(info ************************************************************)
-$(error stop)
 endif
 
 # Check for the correct version of javac
@@ -226,6 +224,9 @@ endif
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
 
+# Bring in Qualcomm helper macros
+include $(BUILD_SYSTEM)/qcom_utils.mk
+
 # Bring in dex_preopt.mk
 include $(BUILD_SYSTEM)/dex_preopt.mk
 
@@ -287,7 +288,7 @@ enable_target_debugging := true
 tags_to_install :=
 ifneq (,$(user_variant))
   # Target is secure in user builds.
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
+  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
 
   ifeq ($(user_variant),userdebug)
     # Pick up some extra useful tools
@@ -738,7 +739,6 @@ $(ALL_C_CPP_ETC_OBJECTS): | all_copied_headers
 .PHONY: files
 files: prebuilt \
         $(modules_to_install) \
-        $(modules_to_check) \
         $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 
 # -------------------------------------------------------------------
@@ -890,7 +890,7 @@ $(foreach module,$(sample_MODULES),$(eval $(call \
 sample_ADDITIONAL_INSTALLED := \
         $(filter-out $(modules_to_install) $(modules_to_check) $(ALL_PREBUILT),$(sample_MODULES))
 samplecode: $(sample_APKS_COLLECTION)
-	@echo "Collect sample code apks: $^"
+	@echo -e ${CL_GRN}"Collect sample code apks:"${CL_RST}" $^"
 	# remove apks that are not intended to be installed.
 	rm -f $(sample_ADDITIONAL_INSTALLED)
 
@@ -899,8 +899,8 @@ findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
 .PHONY: clean
 clean:
-	@rm -rf $(OUT_DIR)
-	@echo "Entire build directory removed."
+	@rm -rf $(OUT_DIR)/*
+	@echo -e ${CL_GRN}"Entire build directory removed."${CL_RST}
 
 .PHONY: clobber
 clobber: clean
@@ -910,7 +910,7 @@ clobber: clean
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules
 modules:
-	@echo "Available sub-modules:"
+	@echo -e ${CL_GRN}"Available sub-modules:"${CL_RST}
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
 	      tr -s ' ' '\n' | sort -u | $(COLUMN)
 
